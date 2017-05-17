@@ -1,6 +1,7 @@
 """Test the naming funcition of redis-naming-py."""
 
 from redisnaming import RedisNamer
+from redisnaming import UnexpectedFieldError
 
 NAMER_0 = RedisNamer(key_field='user', value_field='locale')
 NAMER_1 = RedisNamer(key_fields=('user', 'domain'),
@@ -27,3 +28,27 @@ def test_multifieldvaluenaming():
     """Include multiple value field names in value."""
     value = NAMER_1.name_value(locale='en-US', timezone='America/New_York')
     assert value == 'locale:en-US:timezone:America/New_York'
+
+
+def test_unexpectedkeyfield():
+    """Validate that all specified key fields exist."""
+    try:
+        NAMER_0.name_key(user='smith', foo='bar')
+    except UnexpectedFieldError, error:
+        assert error.unexpected_field == 'foo'
+    except:
+        assert False
+    else:
+        assert False
+
+
+def test_unexpectedvaluefield():
+    """Validate that all specified value fields exist."""
+    try:
+        NAMER_0.name_value(locale='en-US', foo='bar')
+    except UnexpectedFieldError, error:
+        assert error.unexpected_field == 'foo'
+    except:
+        assert False
+    else:
+        assert False

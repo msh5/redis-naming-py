@@ -18,7 +18,10 @@ class TooLessFieldsError(Exception):
 class UnexpectedFieldError(Exception):
     """The error should be raised when the unexpected field value exists."""
 
-    pass
+    def __init__(self, unexpected_field):
+        """Set the unexpected field as the error cause."""
+        super(UnexpectedFieldError, self).__init__()
+        self.unexpected_field = unexpected_field
 
 
 class RedisNamer(object):
@@ -38,8 +41,11 @@ class RedisNamer(object):
 
     def name_key(self, **kwargs):
         """Build the key name."""
-        # TODO: validate the parameter values
         # TODO: support args param
+
+        for arg in kwargs.keys():
+            if arg not in self.key_fields:
+                raise UnexpectedFieldError(unexpected_field=arg)
 
         key = ''
         for key_field in self.key_fields:
@@ -55,8 +61,11 @@ class RedisNamer(object):
 
     def name_value(self, **kwargs):
         """Build the value name."""
-        # TODO: validate the parameter values
         # TODO: support args param
+
+        for arg in kwargs.keys():
+            if arg not in self.value_fields:
+                raise UnexpectedFieldError(unexpected_field=arg)
 
         if len(self.value_fields) == 1:
             value_field = self.value_fields[0]
