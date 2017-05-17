@@ -1,29 +1,29 @@
-"""Test the redis-naming-py module."""
+"""Test the naming funcition of redis-naming-py."""
 
-from redisnaming import RedisNaming
+from redisnaming import RedisNamer
 
-NAMING_0 = RedisNaming(key_field='user', value_field='locale')
-NAMING_1 = RedisNaming(key_fields=('user', 'domain'),
-                       value_fields=('locale', 'timezone'))
+NAMER_0 = RedisNamer(key_field='user', value_field='locale')
+NAMER_1 = RedisNamer(key_fields=('user', 'domain'),
+                     value_fields=('locale', 'timezone'))
 
 
-def test_keybuild():
+def test_keynaming():
     """Include key field name and value field name in key."""
-    assert NAMING_0.build_key(user='smith') == 'user:smith:locale'
+    assert NAMER_0.name_key(user='smith') == 'user:smith:locale'
 
 
-def test_valuebuild():
+def test_valuenaming():
     """Do not include value field name in value."""
-    assert NAMING_0.build_value(locale='en-US') == 'en-US'
+    assert NAMER_0.name_value(locale='en-US') == 'en-US'
 
 
-def test_multifieldkeybuild():
+def test_multifieldkeynaming():
     """Include multiple key field names in key."""
-    key = NAMING_1.build_key(user='smith', domain='tech0522.tk')
+    key = NAMER_1.name_key(user='smith', domain='tech0522.tk')
     assert key == 'user:smith:domain:tech0522.tk'
 
 
-def test_multifieldvaluebuild():
+def test_multifieldvaluenaming():
     """Include multiple value field names in value."""
-    value = NAMING_1.build_value(locale='en-US', timezone='America/New_York')
+    value = NAMER_1.name_value(locale='en-US', timezone='America/New_York')
     assert value == 'locale:en-US:timezone:America/New_York'

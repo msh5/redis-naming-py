@@ -21,7 +21,7 @@ class UnexpectedFieldError(Exception):
     pass
 
 
-class RedisNaming(object):
+class RedisNamer(object):
     """Manage the field settings of key and value."""
 
     def __init__(self, key_field=None, key_fields=None, value_field=None,
@@ -36,7 +36,7 @@ class RedisNaming(object):
         if self.value_fields is None:
             self.value_fields = [] if value_field is None else [value_field]
 
-    def build_key(self, **kwargs):
+    def name_key(self, **kwargs):
         """Build the key name."""
         # TODO: validate the parameter values
         # TODO: support args param
@@ -53,7 +53,7 @@ class RedisNaming(object):
             key += self.value_fields[0]
         return key
 
-    def build_value(self, **kwargs):
+    def name_value(self, **kwargs):
         """Build the value name."""
         # TODO: validate the parameter values
         # TODO: support args param
