@@ -1,3 +1,5 @@
+"""Define the redis-naming-py package configration."""
+
 from distutils.core import setup
 
 setup(name='redisnaming',

@@ -1,3 +1,5 @@
+"""Test the redis-naming-py module."""
+
 from redisnaming import RedisNaming
 
 NAMING_0 = RedisNaming(key_field='user', value_field='locale')

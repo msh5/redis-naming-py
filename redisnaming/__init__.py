@@ -1,21 +1,32 @@
+"""The main script of redis-naming-py."""
+
 DELIMITER = ':'
 
 
 class TooManyFieldsError(Exception):
+    """The error should be raised when the field values are too many."""
+
     pass
 
 
 class TooLessFieldsError(Exception):
+    """The error should be raised when the field values are too less."""
+
     pass
 
 
 class UnexpectedFieldError(Exception):
+    """The error should be raised when the unexpected field value exists."""
+
     pass
 
 
 class RedisNaming(object):
+    """Manage the field settings of key and value."""
+
     def __init__(self, key_field=None, key_fields=None, value_field=None,
                  value_fields=None):
+        """Set the field settings of key and value."""
         # TODO: validate the parameter values
 
         self.key_fields = key_fields
