@@ -30,8 +30,6 @@ class RedisNamer(object):
     def __init__(self, key_field=None, key_fields=None, value_field=None,
                  value_fields=None):
         """Set the field settings of key and value."""
-        # TODO: validate the parameter values
-
         self.key_fields = key_fields
         if self.key_fields is None:
             self.key_fields = [] if key_field is None else [key_field]
@@ -39,42 +37,76 @@ class RedisNamer(object):
         if self.value_fields is None:
             self.value_fields = [] if value_field is None else [value_field]
 
-    def name_key(self, **kwargs):
+    def name_key(self, *args, **kwargs):
         """Build the key name."""
-        # TODO: support args param
-
-        for arg in kwargs.keys():
-            if arg not in self.key_fields:
-                raise UnexpectedFieldError(unexpected_field=arg)
-
         key = ''
-        for key_field in self.key_fields:
-            if key != '':
+        if len(args) > 0:
+            if len(args) > len(self.key_fields):
+                raise TooManyFieldsError()
+            elif len(args) < len(self.key_fields):
+                raise TooLessFieldsError()
+            for key_field, arg in zip(self.key_fields, args):
+                if key != '':
+                    key += DELIMITER
+                key += key_field
                 key += DELIMITER
-            key += key_field
-            key += DELIMITER
-            key += kwargs[key_field]
+                key += arg
+        else:
+            for arg in kwargs.keys():
+                if arg not in self.key_fields:
+                    raise UnexpectedFieldError(unexpected_field=arg)
+            for key_field in self.key_fields:
+                if key != '':
+                    key += DELIMITER
+                key += key_field
+                key += DELIMITER
+                key += kwargs[key_field]
+
+        # If value field is only one, concatenate the value field name to tail
         if len(self.value_fields) == 1:
             key += DELIMITER
             key += self.value_fields[0]
         return key
 
-    def name_value(self, **kwargs):
+    def name_value(self, *args, **kwargs):
         """Build the value name."""
         # TODO: support args param
 
-        for arg in kwargs.keys():
-            if arg not in self.value_fields:
-                raise UnexpectedFieldError(unexpected_field=arg)
+        if len(args) > 0:
+            if len(args) > len(self.value_fields):
+                raise TooManyFieldsError()
+            elif len(args) < len(self.value_fields):
+                raise TooLessFieldsError()
 
-        if len(self.value_fields) == 1:
-            value_field = self.value_fields[0]
-            return kwargs[value_field]
-        value = ''
-        for value_field in self.value_fields:
-            if value != '':
+            # If value field is only one, return value only because value field
+            # name should be concatenated to key
+            if len(self.value_fields) == 1:
+                return args[0]
+
+            value = ''
+            for arg, value_field in zip(args, self.value_fields):
+                if value != '':
+                    value += DELIMITER
+                value += value_field
                 value += DELIMITER
-            value += value_field
-            value += DELIMITER
-            value += kwargs[value_field]
-        return value
+                value += arg
+            return value
+        else:
+            for arg in kwargs.keys():
+                if arg not in self.value_fields:
+                    raise UnexpectedFieldError(unexpected_field=arg)
+
+            # If value field is only one, return value only because value field
+            # name should be concatenated to key
+            if len(self.value_fields) == 1:
+                value_field = self.value_fields[0]
+                return kwargs[value_field]
+
+            value = ''
+            for value_field in self.value_fields:
+                if value != '':
+                    value += DELIMITER
+                value += value_field
+                value += DELIMITER
+                value += kwargs[value_field]
+            return value
