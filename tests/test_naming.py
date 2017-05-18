@@ -1,6 +1,8 @@
 """Test the naming funcition of redis-naming-py."""
 
 from redisnaming import RedisNamer
+from redisnaming import NoKeyFieldsError
+from redisnaming import NoValueFieldsError
 from redisnaming import TooManyFieldsError
 from redisnaming import TooLessFieldsError
 from redisnaming import UnexpectedFieldError
@@ -37,6 +39,30 @@ def test_multifieldvaluenaming():
     assert NAMER_1.name_value('en-US', 'America/New_York') == EXPECTED
     assert NAMER_1.name_value(
         locale='en-US', timezone='America/New_York') == EXPECTED
+
+
+def test_nokeyfields():
+    """Validate that some key fields is specified."""
+    try:
+        RedisNamer(value_field='foo')
+    except NoKeyFieldsError:
+        assert True
+    except:
+        assert False
+    else:
+        assert False
+
+
+def test_novaluefields():
+    """Validate that some value fields is specified."""
+    try:
+        RedisNamer(key_field='foo')
+    except NoValueFieldsError:
+        assert True
+    except:
+        assert False
+    else:
+        assert False
 
 
 def test_toomanykeyfields():

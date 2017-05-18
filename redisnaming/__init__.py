@@ -3,6 +3,18 @@
 DELIMITER = ':'
 
 
+class NoKeyFieldsError(Exception):
+    """The error should be raised when any key fileds is not specified."""
+
+    pass
+
+
+class NoValueFieldsError(Exception):
+    """The error should be raised when any value fields is not specified."""
+
+    pass
+
+
 class TooManyFieldsError(Exception):
     """The error should be raised when the field values are too many."""
 
@@ -33,9 +45,14 @@ class RedisNamer(object):
         self.key_fields = key_fields
         if self.key_fields is None:
             self.key_fields = [] if key_field is None else [key_field]
+        if len(self.key_fields) == 0:
+            raise NoKeyFieldsError()
+
         self.value_fields = value_fields
         if self.value_fields is None:
             self.value_fields = [] if value_field is None else [value_field]
+        if len(self.value_fields) == 0:
+            raise NoValueFieldsError()
 
     def name_key(self, *args, **kwargs):
         """Build the key name."""
