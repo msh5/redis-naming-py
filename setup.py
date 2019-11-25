@@ -6,9 +6,9 @@ setup(name='redisnaming',
       version='1.0',
       description='Provide the function to build key and value on the ' +
       'naming convention that proposed by the Redis documentation.',
-      author='minagoro',
-      author_email='minagoro0522@gmail.com',
-      url='http://github.com/tech0522/redis-naming-py',
+      author='Sho Minagawa',
+      author_email='msh5.global@gmail.com',
+      url='http://github.com/msh5/redis-naming-py',
       license='MIT',
       classifiers=[
           'Development Status :: 5 - Production/Stable',
